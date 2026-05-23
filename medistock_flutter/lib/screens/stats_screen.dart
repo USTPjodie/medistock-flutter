@@ -40,6 +40,7 @@ class _StatsScreenState extends State<StatsScreen>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Consumer<MedicationProvider>(
       builder: (context, provider, child) {
         final events = _filter(provider.doseEvents);
@@ -49,7 +50,7 @@ class _StatsScreenState extends State<StatsScreen>
             : provider.adherenceRate;
 
         return Scaffold(
-          backgroundColor: AppTheme.background,
+          backgroundColor: theme.scaffoldBackgroundColor,
           body: SafeArea(
             child: Column(
               children: [
@@ -72,19 +73,19 @@ class _StatsScreenState extends State<StatsScreen>
                   child: Container(
                     height: 40,
                     decoration: BoxDecoration(
-                      color: AppTheme.cardWhite,
+                      color: theme.cardColor,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppTheme.border),
+                      border: Border.all(color: theme.dividerColor),
                     ),
                     child: TabBar(
                       controller: _tabCtrl,
                       indicator: BoxDecoration(
-                        color: AppTheme.primary,
+                        color: theme.primaryColor,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       indicatorSize: TabBarIndicatorSize.tab,
                       labelColor: Colors.white,
-                      unselectedLabelColor: AppTheme.lightText,
+                      unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
                       labelStyle: AppTheme.caption.copyWith(
                           fontWeight: FontWeight.w700, color: Colors.white),
                       unselectedLabelStyle: AppTheme.caption,
@@ -116,11 +117,11 @@ class _StatsScreenState extends State<StatsScreen>
                         const SizedBox(height: 20),
 
                         // Activity bar chart
-                        _buildActivityChart(events),
+                        _buildActivityChart(context, events),
                         const SizedBox(height: 20),
 
                         // History list
-                        _buildHistory(events, provider),
+                        _buildHistory(context, events, provider),
                       ],
                     ),
                   ),
@@ -199,7 +200,8 @@ class _StatsScreenState extends State<StatsScreen>
   }
 
   // ── Activity bar chart (7-day bars) ────────────────────────────────────
-  Widget _buildActivityChart(List<DoseEvent> events) {
+  Widget _buildActivityChart(BuildContext context, List<DoseEvent> events) {
+    final theme = Theme.of(context);
     final now = DateTime.now();
     final days = List.generate(7, (i) => now.subtract(Duration(days: 6 - i)));
 
@@ -223,9 +225,9 @@ class _StatsScreenState extends State<StatsScreen>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppTheme.cardWhite,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppTheme.border),
+        border: Border.all(color: theme.dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -233,7 +235,7 @@ class _StatsScreenState extends State<StatsScreen>
           Text('Weekly Activity', style: AppTheme.title),
           const SizedBox(height: 4),
           Text('Doses taken vs missed',
-              style: AppTheme.caption),
+              style: AppTheme.caption.copyWith(color: theme.colorScheme.onSurfaceVariant)),
           const SizedBox(height: 20),
           SizedBox(
             height: 120,
@@ -269,7 +271,8 @@ class _StatsScreenState extends State<StatsScreen>
   }
 
   // ── History list ────────────────────────────────────────────────────────
-  Widget _buildHistory(List<DoseEvent> events, MedicationProvider provider) {
+  Widget _buildHistory(BuildContext context, List<DoseEvent> events, MedicationProvider provider) {
+    final theme = Theme.of(context);
     final shown = events
         .where((e) =>
             e.status == DoseStatus.taken || e.status == DoseStatus.missed)
@@ -279,9 +282,9 @@ class _StatsScreenState extends State<StatsScreen>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppTheme.cardWhite,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppTheme.border),
+        border: Border.all(color: theme.dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -294,9 +297,10 @@ class _StatsScreenState extends State<StatsScreen>
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Column(
                   children: [
-                    Icon(Icons.history, size: 40, color: AppTheme.lightText),
+                    Icon(Icons.history, size: 40, color: theme.colorScheme.onSurfaceVariant),
                     const SizedBox(height: 8),
-                    Text('No history yet', style: AppTheme.bodySmall),
+                    Text('No history yet',
+                        style: AppTheme.bodySmall.copyWith(color: theme.colorScheme.onSurfaceVariant)),
                   ],
                 ),
               ),
@@ -372,6 +376,7 @@ class _SummaryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
@@ -385,7 +390,8 @@ class _SummaryTile extends StatelessWidget {
             Text(value,
                 style: AppTheme.headline.copyWith(color: color, fontSize: 26)),
             const SizedBox(height: 4),
-            Text(label, style: AppTheme.caption),
+            Text(label,
+                style: AppTheme.caption.copyWith(color: theme.colorScheme.onSurfaceVariant)),
           ],
         ),
       ),
@@ -410,6 +416,7 @@ class _ActivityBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     const maxH = 90.0;
     final takenH = taken > 0 ? (heightFraction * maxH * (taken / (taken + missed).clamp(1, 99))) : 0.0;
     final missedH = missed > 0 ? (heightFraction * maxH * (missed / (taken + missed).clamp(1, 99))) : 0.0;
@@ -423,7 +430,7 @@ class _ActivityBar extends StatelessWidget {
             width: 28,
             height: 4,
             decoration: BoxDecoration(
-              color: AppTheme.primary,
+              color: theme.primaryColor,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -446,7 +453,7 @@ class _ActivityBar extends StatelessWidget {
                 Container(
                     width: 28,
                     height: emptyH,
-                    color: AppTheme.border),
+                    color: theme.dividerColor),
             ],
           ),
         ),
@@ -454,7 +461,7 @@ class _ActivityBar extends StatelessWidget {
         Text(day,
             style: AppTheme.caption.copyWith(
               fontWeight: isToday ? FontWeight.w700 : FontWeight.w400,
-              color: isToday ? AppTheme.primary : AppTheme.lightText,
+              color: isToday ? theme.primaryColor : theme.colorScheme.onSurfaceVariant,
             )),
       ],
     );
@@ -468,6 +475,7 @@ class _Legend extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Row(
       children: [
         Container(
@@ -477,7 +485,7 @@ class _Legend extends StatelessWidget {
               BoxDecoration(color: color, borderRadius: BorderRadius.circular(3)),
         ),
         const SizedBox(width: 5),
-        Text(label, style: AppTheme.caption),
+        Text(label, style: AppTheme.caption.copyWith(color: theme.colorScheme.onSurfaceVariant)),
       ],
     );
   }
@@ -490,14 +498,15 @@ class _HistoryRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final isTaken = event.status == DoseStatus.taken;
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: AppTheme.background,
+        color: theme.scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.border),
+        border: Border.all(color: theme.dividerColor),
       ),
       child: Row(
         children: [
@@ -518,7 +527,7 @@ class _HistoryRow extends StatelessWidget {
                     style: AppTheme.body.copyWith(fontWeight: FontWeight.w600)),
                 Text(
                     DateFormat('MMM d, h:mm a').format(event.scheduledTime),
-                    style: AppTheme.caption),
+                    style: AppTheme.caption.copyWith(color: theme.colorScheme.onSurfaceVariant)),
               ],
             ),
           ),

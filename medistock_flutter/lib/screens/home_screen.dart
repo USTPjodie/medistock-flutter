@@ -11,12 +11,13 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Consumer<MedicationProvider>(
       builder: (context, provider, child) {
         return Scaffold(
-          backgroundColor: AppTheme.background,
+          backgroundColor: theme.scaffoldBackgroundColor,
           body: RefreshIndicator(
-            color: AppTheme.primary,
+            color: theme.primaryColor,
             onRefresh: provider.initialize,
             child: CustomScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
@@ -31,15 +32,15 @@ class HomeScreen extends StatelessWidget {
                         const SizedBox(height: 20),
                         _buildAdherenceBanner(provider),
                         const SizedBox(height: 24),
-                        _buildAreaStats(provider),
+                        _buildAreaStats(context, provider),
                         const SizedBox(height: 28),
-                        _buildSectionHeader('Upcoming Doses'),
+                        _buildSectionHeader(context, 'Upcoming Doses'),
                         const SizedBox(height: 12),
-                        _buildUpcomingDoses(provider),
+                        _buildUpcomingDoses(context, provider),
                         const SizedBox(height: 28),
-                        _buildSectionHeader('Today\'s Schedule'),
+                        _buildSectionHeader(context, 'Today\'s Schedule'),
                         const SizedBox(height: 12),
-                        _buildScheduleCards(provider),
+                        _buildScheduleCards(context, provider),
                         const SizedBox(height: 100),
                       ],
                     ),
@@ -55,11 +56,12 @@ class HomeScreen extends StatelessWidget {
 
   // ── App Bar ──────────────────────────────────────────────────────────
   SliverAppBar _buildAppBar(BuildContext context, MedicationProvider provider) {
+    final theme = Theme.of(context);
     return SliverAppBar(
       expandedHeight: 0,
       floating: true,
       snap: true,
-      backgroundColor: AppTheme.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       elevation: 0,
       titleSpacing: 20,
       title: Row(
@@ -71,7 +73,7 @@ class HomeScreen extends StatelessWidget {
                 Text(
                   'Good ${_greeting()} ☀️',
                   style: AppTheme.bodySmall
-                      .copyWith(color: AppTheme.lightText),
+                      .copyWith(color: theme.colorScheme.onSurfaceVariant),
                 ),
                 const SizedBox(height: 2),
                 Text('MediStock', style: AppTheme.heading3),
@@ -134,7 +136,7 @@ class HomeScreen extends StatelessWidget {
   }
 
   // ── Three area-stat chips ────────────────────────────────────────────
-  Widget _buildAreaStats(MedicationProvider provider) {
+  Widget _buildAreaStats(BuildContext context, MedicationProvider provider) {
     final now = DateTime.now();
     final todayAll = provider.doseEvents.where((e) {
       final d = e.scheduledTime;
@@ -189,20 +191,21 @@ class HomeScreen extends StatelessWidget {
   }
 
   // ── Section header ───────────────────────────────────────────────────
-  Widget _buildSectionHeader(String title) {
+  Widget _buildSectionHeader(BuildContext context, String title) {
+    final theme = Theme.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(title, style: AppTheme.title),
         Text('See all',
             style: AppTheme.bodySmall
-                .copyWith(color: AppTheme.primary, fontWeight: FontWeight.w600)),
+                .copyWith(color: theme.primaryColor, fontWeight: FontWeight.w600)),
       ],
     );
   }
 
   // ── Upcoming horizontal scroll ───────────────────────────────────────
-  Widget _buildUpcomingDoses(MedicationProvider provider) {
+  Widget _buildUpcomingDoses(BuildContext context, MedicationProvider provider) {
     final now = DateTime.now();
     final currentMin = now.hour * 60 + now.minute;
     final upcoming = (provider.activeSchedules.toList()
@@ -222,7 +225,7 @@ class HomeScreen extends StatelessWidget {
         .toList();
 
     if (upcoming.isEmpty) {
-      return _EmptyHint(
+      return const _EmptyHint(
         icon: Icons.check_circle_outline,
         label: 'All doses done for today!',
         color: AppTheme.success,
@@ -241,13 +244,14 @@ class HomeScreen extends StatelessWidget {
   }
 
   // ── Full schedule cards ──────────────────────────────────────────────
-  Widget _buildScheduleCards(MedicationProvider provider) {
+  Widget _buildScheduleCards(BuildContext context, MedicationProvider provider) {
     final schedules = provider.activeSchedules.take(4).toList();
     if (schedules.isEmpty) {
+      final theme = Theme.of(context);
       return _EmptyHint(
         icon: Icons.medication_outlined,
         label: 'No medications scheduled yet.\nTap + to add one.',
-        color: AppTheme.lightText,
+        color: theme.colorScheme.onSurfaceVariant,
       );
     }
     return Column(
@@ -276,6 +280,7 @@ class _NotifBell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return GestureDetector(
       onTap: () => Navigator.push(
           context,
@@ -287,12 +292,12 @@ class _NotifBell extends StatelessWidget {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: AppTheme.cardWhite,
+              color: theme.cardColor,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppTheme.border),
+              border: Border.all(color: theme.dividerColor),
             ),
-            child: const Icon(Icons.notifications_outlined,
-                color: AppTheme.darkText, size: 22),
+            child: Icon(Icons.notifications_outlined,
+                color: theme.colorScheme.onSurface, size: 22),
           ),
           if (provider.unreadCount > 0)
             Positioned(
@@ -304,7 +309,7 @@ class _NotifBell extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppTheme.danger,
                   shape: BoxShape.circle,
-                  border: Border.all(color: AppTheme.background, width: 1.5),
+                  border: Border.all(color: theme.scaffoldBackgroundColor, width: 1.5),
                 ),
               ),
             ),
@@ -362,13 +367,14 @@ class _AreaStatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
         decoration: BoxDecoration(
-          color: AppTheme.cardWhite,
+          color: theme.cardColor,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppTheme.border),
+          border: Border.all(color: theme.dividerColor),
         ),
         child: Column(
           children: [
@@ -382,12 +388,10 @@ class _AreaStatCard extends StatelessWidget {
               child: Icon(icon, color: color, size: 18),
             ),
             const SizedBox(height: 8),
-            Text(value,
-                style: AppTheme.heading3
-                    .copyWith(fontSize: 20, color: AppTheme.darkerText)),
+            Text(value, style: AppTheme.heading3.copyWith(fontSize: 20)),
             const SizedBox(height: 3),
             Text(label,
-                style: AppTheme.caption,
+                style: AppTheme.caption.copyWith(color: theme.colorScheme.onSurfaceVariant),
                 textAlign: TextAlign.center),
           ],
         ),
@@ -402,6 +406,7 @@ class _UpcomingDoseChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final parts = schedule.doseTime.split(':');
     final h = int.tryParse(parts[0]) ?? 0;
     final m = parts.length > 1 ? parts[1] : '00';
@@ -412,9 +417,9 @@ class _UpcomingDoseChip extends StatelessWidget {
       width: 130,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppTheme.primary.withValues(alpha: 0.08),
+        color: theme.primaryColor.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.primary.withValues(alpha: 0.25)),
+        border: Border.all(color: theme.primaryColor.withValues(alpha: 0.25)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -422,7 +427,7 @@ class _UpcomingDoseChip extends StatelessWidget {
         children: [
           Text('$dh:$m $ampm',
               style: AppTheme.title.copyWith(
-                  color: AppTheme.primary, fontWeight: FontWeight.w700)),
+                  color: theme.primaryColor, fontWeight: FontWeight.w700)),
           const SizedBox(height: 6),
           Text(schedule.medicationName,
               style: AppTheme.body.copyWith(fontWeight: FontWeight.w500),
@@ -430,7 +435,9 @@ class _UpcomingDoseChip extends StatelessWidget {
               overflow: TextOverflow.ellipsis),
           const SizedBox(height: 2),
           Text(schedule.dosage,
-              style: AppTheme.caption, maxLines: 1, overflow: TextOverflow.ellipsis),
+              style: AppTheme.caption.copyWith(color: theme.colorScheme.onSurfaceVariant),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis),
         ],
       ),
     );
@@ -443,6 +450,7 @@ class _ScheduleRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final parts = schedule.doseTime.split(':');
     final h = int.tryParse(parts[0]) ?? 0;
     final m = parts.length > 1 ? parts[1] : '00';
@@ -452,9 +460,9 @@ class _ScheduleRow extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.cardWhite,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.border),
+        border: Border.all(color: theme.dividerColor),
       ),
       child: Row(
         children: [
@@ -475,7 +483,8 @@ class _ScheduleRow extends StatelessWidget {
                 Text(schedule.medicationName,
                     style: AppTheme.body.copyWith(fontWeight: FontWeight.w600)),
                 const SizedBox(height: 3),
-                Text(schedule.dosage, style: AppTheme.caption),
+                Text(schedule.dosage,
+                    style: AppTheme.caption.copyWith(color: theme.colorScheme.onSurfaceVariant)),
               ],
             ),
           ),
@@ -484,8 +493,9 @@ class _ScheduleRow extends StatelessWidget {
             children: [
               Text('$dh:$m',
                   style: AppTheme.title.copyWith(
-                      color: AppTheme.primary, fontWeight: FontWeight.w700)),
-              Text(ampm, style: AppTheme.caption),
+                      color: theme.primaryColor, fontWeight: FontWeight.w700)),
+              Text(ampm,
+                  style: AppTheme.caption.copyWith(color: theme.colorScheme.onSurfaceVariant)),
             ],
           ),
           const SizedBox(width: 12),
@@ -495,7 +505,7 @@ class _ScheduleRow extends StatelessWidget {
             height: 26,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: AppTheme.border, width: 2),
+              border: Border.all(color: theme.dividerColor, width: 2),
             ),
           ),
         ],
@@ -513,13 +523,14 @@ class _EmptyHint extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: AppTheme.cardWhite,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.border),
+        border: Border.all(color: theme.dividerColor),
       ),
       child: Column(
         children: [
@@ -527,7 +538,7 @@ class _EmptyHint extends StatelessWidget {
           const SizedBox(height: 12),
           Text(label,
               textAlign: TextAlign.center,
-              style: AppTheme.bodySmall),
+              style: AppTheme.bodySmall.copyWith(color: theme.colorScheme.onSurfaceVariant)),
         ],
       ),
     );

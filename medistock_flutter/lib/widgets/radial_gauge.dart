@@ -43,7 +43,7 @@ class RadialGauge extends StatelessWidget {
             size: Size(size, size),
             painter: _ArcPainter(
               strokeWidth: strokeWidth,
-              color: AppTheme.border,
+              color: Theme.of(context).dividerColor,
               startAngle: startAngle,
               sweepAngle: sweepAngle,
             ),

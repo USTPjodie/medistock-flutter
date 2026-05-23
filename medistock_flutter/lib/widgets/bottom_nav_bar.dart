@@ -64,13 +64,14 @@ class _BottomNavBarState extends State<BottomNavBar>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       height: 72,
       decoration: BoxDecoration(
-        color: AppTheme.tabBar,
+        color: theme.cardColor,
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primary.withValues(alpha: 0.08),
+            color: theme.shadowColor.withValues(alpha: 0.08),
             blurRadius: 24,
             offset: const Offset(0, -4),
           ),
@@ -93,6 +94,7 @@ class _BottomNavBarState extends State<BottomNavBar>
   }
 
   Widget _buildTab(int index) {
+    final theme = Theme.of(context);
     final tab = _tabs[index];
     final isSelected = widget.selectedIndex == index;
 
@@ -114,7 +116,7 @@ class _BottomNavBarState extends State<BottomNavBar>
                   decoration: BoxDecoration(
                     color: Color.lerp(
                         Colors.transparent,
-                        AppTheme.primary.withValues(alpha: 0.12),
+                        theme.primaryColor.withValues(alpha: 0.12),
                         t),
                     borderRadius: BorderRadius.circular(16),
                   ),
@@ -122,7 +124,7 @@ class _BottomNavBarState extends State<BottomNavBar>
                     isSelected ? tab.filledIcon : tab.outlinedIcon,
                     size: 22,
                     color: Color.lerp(
-                        AppTheme.tabBarUnselected, AppTheme.primary, t),
+                        AppTheme.tabBarUnselected, theme.primaryColor, t),
                   ),
                 ),
                 const SizedBox(height: 3),
@@ -134,7 +136,7 @@ class _BottomNavBarState extends State<BottomNavBar>
                     fontWeight:
                         isSelected ? FontWeight.w700 : FontWeight.w500,
                     color: Color.lerp(
-                        AppTheme.tabBarUnselected, AppTheme.primary, t),
+                        AppTheme.tabBarUnselected, theme.primaryColor, t),
                   ),
                 ),
               ],

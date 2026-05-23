@@ -94,14 +94,76 @@ class AppTheme {
     dividerColor: divider,
   );
 
+  // ── Dark Theme ───────────────────────────────────────────────────────
+  static ThemeData darkTheme = ThemeData(
+    useMaterial3: true,
+    fontFamily: fontName,
+    brightness: Brightness.dark,
+    primaryColor: primary,
+    scaffoldBackgroundColor: const Color(0xFF0F172A), // Slate 900
+    colorScheme: const ColorScheme.dark(
+      primary: primary,
+      secondary: accent,
+      surface: Color(0xFF1E293B), // Slate 800
+      error: danger,
+      onSurfaceVariant: Color(0xFF94A3B8), // Slate 400 for muted texts
+    ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Color(0xFF1E293B),
+      foregroundColor: Colors.white,
+      elevation: 0,
+      centerTitle: true,
+    ),
+    cardTheme: CardThemeData(
+      color: const Color(0xFF1E293B),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: Color(0xFF334155)), // Slate 700
+      ),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: primary,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 15),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        textStyle: const TextStyle(
+          fontFamily: fontName,
+          fontWeight: FontWeight.w600,
+          fontSize: 15,
+        ),
+      ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: const Color(0xFF0F172A),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Color(0xFF334155)),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Color(0xFF334155)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: primary, width: 2),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    ),
+    dividerColor: const Color(0xFF334155),
+  );
+
   // ── Text Styles ───────────────────────────────────────────────────────
+  // Note: we remove hardcoded color properties so they automatically inherit 
+  // the appropriate color from the theme's DefaultTextStyle.
   static const TextStyle display1 = TextStyle(
     fontFamily: fontName,
     fontWeight: FontWeight.bold,
     fontSize: 32,
     letterSpacing: 0.4,
     height: 1.1,
-    color: darkerText,
   );
 
   static const TextStyle headline = TextStyle(
@@ -109,7 +171,6 @@ class AppTheme {
     fontWeight: FontWeight.bold,
     fontSize: 24,
     letterSpacing: 0.27,
-    color: darkerText,
   );
 
   // alias used throughout screens
@@ -121,7 +182,6 @@ class AppTheme {
     fontWeight: FontWeight.w600,
     fontSize: 18,
     letterSpacing: 0.18,
-    color: darkerText,
   );
 
   static const TextStyle title = TextStyle(
@@ -129,7 +189,6 @@ class AppTheme {
     fontWeight: FontWeight.w600,
     fontSize: 16,
     letterSpacing: 0.18,
-    color: darkText,
   );
 
   static const TextStyle subtitle = TextStyle(
@@ -137,7 +196,6 @@ class AppTheme {
     fontWeight: FontWeight.w400,
     fontSize: 14,
     letterSpacing: -0.04,
-    color: darkText,
   );
 
   static const TextStyle body = TextStyle(
@@ -145,7 +203,6 @@ class AppTheme {
     fontWeight: FontWeight.w400,
     fontSize: 14,
     letterSpacing: 0.1,
-    color: darkText,
   );
 
   static const TextStyle bodySmall = TextStyle(

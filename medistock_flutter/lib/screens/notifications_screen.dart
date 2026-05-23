@@ -10,10 +10,11 @@ class NotificationsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Consumer<MedicationProvider>(
       builder: (context, provider, child) {
         return Scaffold(
-          backgroundColor: AppTheme.background,
+          backgroundColor: theme.scaffoldBackgroundColor,
           body: SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,7 +39,7 @@ class NotificationsScreen extends StatelessWidget {
                           onPressed: () => _markAllRead(provider),
                           child: Text(
                             'Mark all read',
-                            style: TextStyle(color: AppTheme.primary),
+                            style: TextStyle(color: theme.primaryColor, fontWeight: FontWeight.w600),
                           ),
                         ),
                     ],
@@ -47,7 +48,7 @@ class NotificationsScreen extends StatelessWidget {
                 // Notifications List
                 Expanded(
                   child: provider.notifications.isEmpty
-                      ? _buildEmptyState()
+                      ? _buildEmptyState(context)
                       : ListView.builder(
                           padding: const EdgeInsets.all(16),
                           itemCount: provider.notifications.length,
@@ -70,8 +71,9 @@ class NotificationsScreen extends StatelessWidget {
     NotificationItem notification,
     MedicationProvider provider,
   ) {
+    final theme = Theme.of(context);
     final icon = _getNotificationIcon(notification.type);
-    final color = _getNotificationColor(notification.type);
+    final color = _getNotificationColor(context, notification.type);
 
     return GestureDetector(
       onTap: () {
@@ -83,10 +85,10 @@ class NotificationsScreen extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: notification.read ? AppTheme.cardWhite : color.withValues(alpha: 0.1),
+          color: notification.read ? theme.cardColor : color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: notification.read ? AppTheme.border : color.withValues(alpha: 0.3),
+            color: notification.read ? theme.dividerColor : color.withValues(alpha: 0.3),
           ),
         ),
         child: Row(
@@ -123,7 +125,7 @@ class NotificationsScreen extends StatelessWidget {
                           width: 8,
                           height: 8,
                           decoration: BoxDecoration(
-                            color: AppTheme.primary,
+                            color: theme.primaryColor,
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -132,12 +134,12 @@ class NotificationsScreen extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     notification.body,
-                    style: AppTheme.bodySmall,
+                    style: AppTheme.bodySmall.copyWith(color: theme.colorScheme.onSurfaceVariant),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     _formatTime(notification.createdAt),
-                    style: AppTheme.caption,
+                    style: AppTheme.caption.copyWith(color: theme.colorScheme.onSurfaceVariant),
                   ),
                 ],
               ),
@@ -163,10 +165,11 @@ class NotificationsScreen extends StatelessWidget {
     }
   }
 
-  Color _getNotificationColor(String type) {
+  Color _getNotificationColor(BuildContext context, String type) {
+    final theme = Theme.of(context);
     switch (type) {
       case 'reminder':
-        return AppTheme.primary;
+        return theme.primaryColor;
       case 'missed':
         return AppTheme.danger;
       case 'success':
@@ -174,7 +177,7 @@ class NotificationsScreen extends StatelessWidget {
       case 'info':
         return AppTheme.warning;
       default:
-        return AppTheme.lightText;
+        return theme.colorScheme.onSurfaceVariant;
     }
   }
 
@@ -197,7 +200,8 @@ class NotificationsScreen extends StatelessWidget {
     }
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
+    final theme = Theme.of(context);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -205,7 +209,7 @@ class NotificationsScreen extends StatelessWidget {
           Icon(
             Icons.notifications_none,
             size: 64,
-            color: AppTheme.lightText,
+            color: theme.colorScheme.onSurfaceVariant,
           ),
           const SizedBox(height: 16),
           Text(
@@ -215,7 +219,7 @@ class NotificationsScreen extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             'You\'re all caught up!',
-            style: AppTheme.bodySmall,
+            style: AppTheme.bodySmall.copyWith(color: theme.colorScheme.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
         ],

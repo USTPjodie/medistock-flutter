@@ -73,19 +73,20 @@ class _AddMedicationModalState extends State<AddMedicationModal> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       height: MediaQuery.of(context).size.height * 0.85,
-      decoration: const BoxDecoration(
-        color: AppTheme.cardWhite,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
         children: [
           // Header
           Container(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            decoration: const BoxDecoration(
-              border: Border(bottom: BorderSide(color: AppTheme.border)),
+            decoration: BoxDecoration(
+              border: Border(bottom: BorderSide(color: theme.dividerColor)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -136,12 +137,13 @@ class _AddMedicationModalState extends State<AddMedicationModal> {
   }
 
   Widget _buildScheduleTypeSelector() {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.background,
+        color: theme.scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.border),
+        border: Border.all(color: theme.dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -153,7 +155,7 @@ class _AddMedicationModalState extends State<AddMedicationModal> {
           const SizedBox(height: 4),
           Text(
             'Choose how you want to schedule your medication',
-            style: AppTheme.bodySmall,
+            style: AppTheme.bodySmall.copyWith(color: theme.colorScheme.onSurfaceVariant),
           ),
           const SizedBox(height: 16),
           Row(
@@ -181,16 +183,17 @@ class _AddMedicationModalState extends State<AddMedicationModal> {
   }
 
   Widget _buildTypeButton(ScheduleType type, String label, IconData icon) {
+    final theme = Theme.of(context);
     final isSelected = _scheduleType == type;
     return GestureDetector(
       onTap: () => setState(() => _scheduleType = type),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primary : AppTheme.cardWhite,
+          color: isSelected ? theme.primaryColor : theme.cardColor,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: isSelected ? AppTheme.primary : AppTheme.border,
+            color: isSelected ? theme.primaryColor : theme.dividerColor,
           ),
         ),
         child: Row(
@@ -199,13 +202,13 @@ class _AddMedicationModalState extends State<AddMedicationModal> {
             Icon(
               icon,
               size: 20,
-              color: isSelected ? Colors.white : AppTheme.darkText,
+              color: isSelected ? Colors.white : theme.colorScheme.onSurface,
             ),
             const SizedBox(width: 8),
             Text(
               label,
               style: TextStyle(
-                color: isSelected ? Colors.white : AppTheme.darkText,
+                color: isSelected ? Colors.white : theme.colorScheme.onSurface,
                 fontWeight: FontWeight.w600,
                 fontSize: 13,
               ),
@@ -217,12 +220,13 @@ class _AddMedicationModalState extends State<AddMedicationModal> {
   }
 
   Widget _buildFormFields() {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppTheme.cardWhite,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.border),
+        border: Border.all(color: theme.dividerColor),
       ),
       child: Column(
         children: [
@@ -267,7 +271,8 @@ class _AddMedicationModalState extends State<AddMedicationModal> {
               children: [
                 Text(
                   'Days of Week',
-                  style: AppTheme.bodySmall.copyWith(fontWeight: FontWeight.w500),
+                  style: AppTheme.bodySmall.copyWith(
+                      fontWeight: FontWeight.w600, color: theme.colorScheme.onSurface),
                 ),
                 const SizedBox(height: 12),
                 Wrap(
@@ -280,17 +285,17 @@ class _AddMedicationModalState extends State<AddMedicationModal> {
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: isSelected ? AppTheme.primary : AppTheme.background,
+                          color: isSelected ? theme.primaryColor : theme.scaffoldBackgroundColor,
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: isSelected ? AppTheme.primary : AppTheme.border,
+                            color: isSelected ? theme.primaryColor : theme.dividerColor,
                           ),
                         ),
                         child: Center(
                           child: Text(
                             _daysOfWeek[index],
                             style: TextStyle(
-                              color: isSelected ? Colors.white : AppTheme.darkText,
+                              color: isSelected ? Colors.white : theme.colorScheme.onSurface,
                               fontWeight: FontWeight.w600,
                               fontSize: 12,
                             ),

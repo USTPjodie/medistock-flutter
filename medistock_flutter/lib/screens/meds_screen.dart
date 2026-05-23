@@ -32,12 +32,13 @@ class _MedsScreenState extends State<MedsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Consumer<MedicationProvider>(
       builder: (context, provider, child) {
         final filtered = _applyFilter(provider.schedules);
 
         return Scaffold(
-          backgroundColor: AppTheme.background,
+          backgroundColor: theme.scaffoldBackgroundColor,
           body: SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,7 +55,7 @@ class _MedsScreenState extends State<MedsScreen> {
                       Text(
                         '${provider.schedules.length} total',
                         style: AppTheme.bodySmall
-                            .copyWith(color: AppTheme.primary),
+                            .copyWith(color: theme.primaryColor, fontWeight: FontWeight.w600),
                       ),
                     ],
                   ),
@@ -79,13 +80,13 @@ class _MedsScreenState extends State<MedsScreen> {
                               horizontal: 16, vertical: 8),
                           decoration: BoxDecoration(
                             color: selected
-                                ? AppTheme.primary
-                                : AppTheme.cardWhite,
+                                ? theme.primaryColor
+                                : theme.cardColor,
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
                               color: selected
-                                  ? AppTheme.primary
-                                  : AppTheme.border,
+                                  ? theme.primaryColor
+                                  : theme.dividerColor,
                             ),
                           ),
                           child: Text(
@@ -93,7 +94,7 @@ class _MedsScreenState extends State<MedsScreen> {
                             style: AppTheme.caption.copyWith(
                               color: selected
                                   ? Colors.white
-                                  : AppTheme.lightText,
+                                  : theme.colorScheme.onSurfaceVariant,
                               fontWeight: selected
                                   ? FontWeight.w700
                                   : FontWeight.w500,
@@ -109,7 +110,7 @@ class _MedsScreenState extends State<MedsScreen> {
                 // ── List ─────────────────────────────────────────────
                 Expanded(
                   child: filtered.isEmpty
-                      ? _buildEmptyState()
+                      ? _buildEmptyState(context)
                       : ListView.separated(
                           padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
                           itemCount: filtered.length,
@@ -129,7 +130,8 @@ class _MedsScreenState extends State<MedsScreen> {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
+    final theme = Theme.of(context);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -138,18 +140,18 @@ class _MedsScreenState extends State<MedsScreen> {
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: AppTheme.primary.withValues(alpha: 0.08),
+              color: theme.primaryColor.withValues(alpha: 0.08),
               shape: BoxShape.circle,
             ),
             child: Icon(Icons.medication_outlined,
-                size: 40, color: AppTheme.primary),
+                size: 40, color: theme.primaryColor),
           ),
           const SizedBox(height: 20),
           Text('No medications found', style: AppTheme.title),
           const SizedBox(height: 8),
           Text(
             'Tap the + button to add your first medication',
-            style: AppTheme.bodySmall,
+            style: AppTheme.bodySmall.copyWith(color: theme.colorScheme.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
         ],
@@ -167,6 +169,7 @@ class _MedCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final scheduleLabel = schedule.scheduleType == ScheduleType.durationBased
         ? 'Every ${schedule.intervalHours}h'
         : _daysLabel();
@@ -174,14 +177,14 @@ class _MedCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.cardWhite,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: schedule.enabled ? AppTheme.border : AppTheme.border,
+          color: theme.dividerColor,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primary.withValues(alpha: 0.04),
+            color: theme.shadowColor.withValues(alpha: 0.04),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -197,7 +200,7 @@ class _MedCard extends StatelessWidget {
               gradient: schedule.enabled
                   ? AppTheme.primaryGradient
                   : LinearGradient(
-                      colors: [AppTheme.border, AppTheme.border]),
+                      colors: [theme.dividerColor, theme.dividerColor]),
               borderRadius: BorderRadius.circular(14),
             ),
             child: const Icon(Icons.medication, color: Colors.white, size: 24),
@@ -212,14 +215,15 @@ class _MedCard extends StatelessWidget {
                     style: AppTheme.body
                         .copyWith(fontWeight: FontWeight.w700)),
                 const SizedBox(height: 3),
-                Text(schedule.dosage, style: AppTheme.caption),
+                Text(schedule.dosage,
+                    style: AppTheme.caption.copyWith(color: theme.colorScheme.onSurfaceVariant)),
                 const SizedBox(height: 6),
                 Row(
                   children: [
                     _InfoPill(
                       icon: Icons.schedule_outlined,
                       label: schedule.doseTime,
-                      color: AppTheme.primary,
+                      color: theme.primaryColor,
                     ),
                     const SizedBox(width: 6),
                     _InfoPill(
@@ -239,7 +243,7 @@ class _MedCard extends StatelessWidget {
                 provider.updateSchedule(schedule.id, {'enabled': v}),
             activeTrackColor: AppTheme.success.withValues(alpha: 0.3),
             activeThumbColor: AppTheme.success,
-            inactiveThumbColor: AppTheme.border,
+            inactiveThumbColor: theme.dividerColor,
           ),
         ],
       ),

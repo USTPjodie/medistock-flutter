@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../app_theme.dart';
 import '../providers/auth_provider.dart';
 import '../providers/medication_provider.dart';
+import '../providers/theme_provider.dart';
 import '../models/user_profile.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -22,7 +23,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         final user = authProvider.user;
 
         return Scaffold(
-          backgroundColor: AppTheme.background,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: CustomScrollView(
             slivers: [
               // ── Fitness-style header banner ──────────────────────────
@@ -44,7 +45,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 16),
                     _buildPhysicianCard(medProvider),
                     const SizedBox(height: 16),
-                    _buildSettingsCard(),
+                    _buildSettingsCard(context),
                     const SizedBox(height: 16),
                     _buildAppInfoCard(medProvider),
                     const SizedBox(height: 24),
@@ -324,10 +325,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   // ── Settings ────────────────────────────────────────────────────────────
-  Widget _buildSettingsCard() {
+  Widget _buildSettingsCard(BuildContext context) {
     return _SectionCard(
-      title: 'Notifications',
-      icon: Icons.notifications_outlined,
+      title: 'Settings',
+      icon: Icons.settings_outlined,
       children: [
         _SwitchRow(
           icon: Icons.notifications_active_outlined,
@@ -344,6 +345,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           value: true,
           onChanged: (_) {},
         ),
+        const _Divider(),
+        const _ThemeSelectionRow(),
       ],
     );
   }
@@ -703,15 +706,16 @@ class _HealthTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
           decoration: BoxDecoration(
-            color: AppTheme.cardWhite,
+            color: theme.cardColor,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppTheme.border),
+            border: Border.all(color: theme.dividerColor),
           ),
           child: Column(
             children: [
@@ -727,12 +731,14 @@ class _HealthTile extends StatelessWidget {
               const SizedBox(height: 8),
               Text(value,
                   style: AppTheme.heading3
-                      .copyWith(fontSize: 20, color: AppTheme.darkerText)),
+                      .copyWith(fontSize: 20)),
               Text(unit,
                   style: AppTheme.caption
                       .copyWith(color: color, fontWeight: FontWeight.w600)),
               const SizedBox(height: 2),
-              Text(label, style: AppTheme.caption, textAlign: TextAlign.center),
+              Text(label,
+                  style: AppTheme.caption.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                  textAlign: TextAlign.center),
             ],
           ),
         ),
@@ -755,19 +761,20 @@ class _SectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: AppTheme.cardWhite,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppTheme.border),
+        border: Border.all(color: theme.dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(icon, color: AppTheme.primary, size: 20),
+              Icon(icon, color: theme.primaryColor, size: 20),
               const SizedBox(width: 8),
               Expanded(child: Text(title, style: AppTheme.title)),
               if (action != null) action!,
@@ -797,6 +804,7 @@ class _InfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -818,14 +826,14 @@ class _InfoRow extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(label, style: AppTheme.caption),
+                  Text(label, style: AppTheme.caption.copyWith(color: theme.colorScheme.onSurfaceVariant)),
                   Text(value,
                       style: AppTheme.body
                           .copyWith(fontWeight: FontWeight.w600)),
                 ],
               ),
             ),
-            Icon(Icons.chevron_right, color: AppTheme.lightText, size: 18),
+            Icon(Icons.chevron_right, color: theme.colorScheme.onSurfaceVariant, size: 18),
           ],
         ),
       ),
@@ -836,9 +844,9 @@ class _InfoRow extends StatelessWidget {
 class _Divider extends StatelessWidget {
   const _Divider();
   @override
-  Widget build(BuildContext context) => const Padding(
-        padding: EdgeInsets.symmetric(vertical: 4),
-        child: Divider(height: 1, color: AppTheme.border),
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Divider(height: 1, color: Theme.of(context).dividerColor),
       );
 }
 
@@ -858,16 +866,17 @@ class _SwitchRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Row(
       children: [
-        Icon(icon, color: AppTheme.lightText, size: 20),
+        Icon(icon, color: theme.colorScheme.onSurfaceVariant, size: 20),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(label, style: AppTheme.body),
-              Text(subtitle, style: AppTheme.caption),
+              Text(subtitle, style: AppTheme.caption.copyWith(color: theme.colorScheme.onSurfaceVariant)),
             ],
           ),
         ),
@@ -889,20 +898,23 @@ class _RowItem extends StatelessWidget {
   const _RowItem({required this.label, required this.value, this.valueColor});
 
   @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(label, style: AppTheme.bodySmall),
-            Text(value,
-                style: AppTheme.body.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: valueColor,
-                )),
-          ],
-        ),
-      );
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: AppTheme.bodySmall.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+          Text(value,
+              style: AppTheme.body.copyWith(
+                fontWeight: FontWeight.w600,
+                color: valueColor,
+              )),
+        ],
+      ),
+    );
+  }
 }
 
 class _AllergyChip extends StatelessWidget {
@@ -944,21 +956,22 @@ class _AddPrompt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: AppTheme.background,
+          color: theme.scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppTheme.border),
+          border: Border.all(color: theme.dividerColor),
         ),
         child: Row(
           children: [
-            Icon(Icons.add_circle_outline, color: AppTheme.lightText),
+            Icon(Icons.add_circle_outline, color: theme.colorScheme.onSurfaceVariant),
             const SizedBox(width: 10),
             Text(label,
-                style: AppTheme.body.copyWith(color: AppTheme.lightText)),
+                style: AppTheme.body.copyWith(color: theme.colorScheme.onSurfaceVariant)),
           ],
         ),
       ),
@@ -972,12 +985,13 @@ class _ContactCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppTheme.primary.withValues(alpha: 0.05),
+        color: theme.primaryColor.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.primary.withValues(alpha: 0.15)),
+        border: Border.all(color: theme.primaryColor.withValues(alpha: 0.15)),
       ),
       child: Row(
         children: [
@@ -999,7 +1013,7 @@ class _ContactCard extends StatelessWidget {
                 Text(contact.name,
                     style:
                         AppTheme.body.copyWith(fontWeight: FontWeight.w700)),
-                Text(contact.relationship, style: AppTheme.caption),
+                Text(contact.relationship, style: AppTheme.caption.copyWith(color: theme.colorScheme.onSurfaceVariant)),
                 const SizedBox(height: 4),
                 Row(
                   children: [
@@ -1015,6 +1029,57 @@ class _ContactCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _ThemeSelectionRow extends StatelessWidget {
+  const _ThemeSelectionRow();
+
+  @override
+  Widget build(BuildContext context) {
+    final themeProvider = context.watch<ThemeProvider>();
+    final theme = Theme.of(context);
+    return Row(
+      children: [
+        Icon(Icons.dark_mode_outlined, color: theme.colorScheme.onSurfaceVariant, size: 20),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Theme Mode', style: AppTheme.body),
+              Text('Customize how MediStock looks',
+                  style: AppTheme.caption.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+            ],
+          ),
+        ),
+        DropdownButton<ThemeMode>(
+          value: themeProvider.themeMode,
+          onChanged: (ThemeMode? newMode) {
+            if (newMode != null) {
+              themeProvider.setThemeMode(newMode);
+            }
+          },
+          underline: const SizedBox(),
+          icon: Icon(Icons.arrow_drop_down, color: theme.primaryColor),
+          dropdownColor: theme.cardColor,
+          items: const [
+            DropdownMenuItem(
+              value: ThemeMode.system,
+              child: Text('System', style: AppTheme.body),
+            ),
+            DropdownMenuItem(
+              value: ThemeMode.light,
+              child: Text('Light', style: AppTheme.body),
+            ),
+            DropdownMenuItem(
+              value: ThemeMode.dark,
+              child: Text('Dark', style: AppTheme.body),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
